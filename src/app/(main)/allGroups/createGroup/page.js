@@ -19,6 +19,7 @@ import {
 } from '@mui/material';
 import { faImage } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { TopNavbar } from '../../components/topNav';
 
 
 const VisuallyHiddenInput = styled('input')({
@@ -39,7 +40,7 @@ export default function Page() {
   const [image, setImage] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
   const router = useRouter();
-
+  const icon = <h5>Done</h5>;
 
   const handleImageChange = (event) => {
     if (event.target.files[0]) {
@@ -66,7 +67,7 @@ export default function Page() {
           imageUrl = await getDownloadURL(storageRef);
         }
 
-        const userGroupsCollection = collection(db, 'userGroups');
+        const userGroupsCollection = collection(db, 'UserGroups');
         const docRef = await addDoc(userGroupsCollection, {
           name: newGroup,
           owner: user.uid,
@@ -75,7 +76,7 @@ export default function Page() {
         });
 
         router.push(`/groupTrans?groupId=${docRef.id}`);
-        console.log('Group created');
+        // console.log('Group created');
       } else {
         console.error('User not authenticated.');
       }
@@ -87,16 +88,7 @@ export default function Page() {
 
   return (
     <>
-      <AppBar position="static" sx={{ backgroundColor: "#00a3b8d1" }}>
-        <Toolbar>
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }} color="secondary">
-            Create a group
-          </Typography>
-          <Button variant="text" color="secondary" size="small" aria-label="Save" onClick={handleCreateGroup} sx={{ color: 'white' }}>
-            Done
-          </Button>
-        </Toolbar>
-      </AppBar>
+      <TopNavbar icon={ icon } function={ handleCreateGroup } />
       <Container sx={{ marginY: 2 }}>
         <Box sx={{ display: 'flex', width: '100%' }} component="form" noValidate autoComplete="off">
           {

@@ -21,7 +21,7 @@ async function userSetup(req) {
         return result;
     }
      catch (error) {
-        console.log('Error occured at user setup: ', e);
+        // console.log('Error occured at user setup: ', e);
             
         return {
             "operationType": "userSetupError",

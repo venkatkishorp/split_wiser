@@ -10,7 +10,7 @@ import '@fontsource/roboto/700.css';
 
 export default function RootLayout({ children }) {
 	const route = useRouter();
-	console.log('Current path: ', route.pathname);
+	// console.log('Current path: ', route.pathname);
 
 	return (
 		<html lang="en" className="h-full bg-white">

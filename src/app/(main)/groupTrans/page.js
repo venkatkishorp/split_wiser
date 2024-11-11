@@ -1,7 +1,24 @@
-export default function GroupTrans() {
+'use client';
+import React from 'react';
+import {
+    Container,
+    Box
+} from '@mui/material';
+import { TopNavbar } from '../components/topNav';
+import { AddExpenseButton } from '../components/addExpenseButton';
+
+function Page() {
     return (
-        <div>
-            Display group transctions if any else if the group was newly created the show an option to add members to the group
-        </div>
+        <>
+            <TopNavbar icon={ <></> } />
+            <Container>
+                <Box>
+                    <h1>Group transaction page</h1>
+                </Box>
+            </Container>
+            <AddExpenseButton />
+        </>
     )
 }
+
+export default Page;

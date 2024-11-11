@@ -18,7 +18,8 @@ import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { faImage } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import useStore from "@/app/store";
-
+import fetchInfo from "@/app/api/gemini/fetchInfo";
+import { TopNavbar } from "../components/topNav";
 
 const VisuallyHiddenInput = styled('input')({
 	clip: 'rect(0 0 0 0)',
@@ -35,7 +36,12 @@ const VisuallyHiddenInput = styled('input')({
 
 function Page() {
 	const router = useRouter();
-	const { setImage, uploadedImage } = useStore();
+	const { setImage, uploadedImage, setItems, items } = useStore();
+	const [itemDetails, setItemDetails] = useState();
+	const [subTotal, setSubTotal] = useState(0);
+	const [tax, setTax] = useState(0);
+	const [total, setTotal] = useState(0);
+	const [transDate, setTransDate] = useState('');
 
 	const handleImageChange = (event) => {
 		if (event.target.files[0]) {
@@ -53,6 +59,22 @@ function Page() {
 		try {
 			const user = auth.currentUser;
 			if (user) {
+				if (user) {
+					const res = await fetchInfo(uploadedImage);
+					console.log('Result is: ', res);
+					if (res) {
+						setItems(res.items);
+						setSubTotal(res.subtotal);
+						setTax(res.tax);
+						setTotal(res.total);
+						setTransDate(res.transactionDate);
+					}
+
+					setItemDetails(res);
+				}
+				else {
+					console.error('User not authenticated.');
+				}
 				router.push(`/addTrans/assignItems`);
 			} else {
 				console.error('User not authenticated.');
@@ -71,46 +93,49 @@ function Page() {
 	}
 
 	return (
-		<Container>
-			<Box>
-				<Button onClick={handleManualSplit}>
-					Enter Split Manually
-				</Button>
-			</Box>
-			<Box>
-				<h6>Automatically Create Split</h6>
-				<Typography variant="caption">Upload Receipt image</Typography>
-				<Box sx={{ display: 'flex', width: '100%' }} component="form" noValidate autoComplete="off">
-					{
-						uploadedImage ?
-							<Image
-								src={uploadedImage}
-								alt="Receipt Preview"
-								width={250}
-								height={400}
-								objectFit="cover"
-							/> : <IconButton aria-label="Receipt" component="label"
-								role={undefined}
-								variant="contained"
-								tabIndex={-1}
-								color="primary"
-								sx={{ padding: 1.75 }}
-							>
-								<FontAwesomeIcon icon={faImage} size="2x" />
-								<VisuallyHiddenInput type="file" accept="image/*" onChange={handleImageChange} />
-							</IconButton>
-					}
-					<Button onClick={handleUploadReceipt}>
-						Upload Receipt
+		<>
+			<TopNavbar icon={ <></> } />
+			<Container>
+				<Box>
+					<Button onClick={handleManualSplit}>
+						Enter Split Manually
 					</Button>
 				</Box>
+				<Box>
+					<h6>Automatically Create Split</h6>
+					<Typography variant="caption">Upload Receipt image</Typography>
+					<Box sx={{ display: 'flex', width: '100%' }} component="form" noValidate autoComplete="off">
+						{
+							uploadedImage ?
+								<Image
+									src={uploadedImage}
+									alt="Receipt Preview"
+									width={250}
+									height={400}
+									objectFit="cover"
+								/> : <IconButton aria-label="Receipt" component="label"
+									role={undefined}
+									variant="contained"
+									tabIndex={-1}
+									color="primary"
+									sx={{ padding: 1.75 }}
+								>
+									<FontAwesomeIcon icon={faImage} size="2x" />
+									<VisuallyHiddenInput type="file" accept="image/*" onChange={handleImageChange} />
+								</IconButton>
+						}
+						<Button onClick={handleUploadReceipt}>
+							Upload Receipt
+						</Button>
+					</Box>
 
-				<Button onClick={handleScanReceipt}>
-					Scan Receipt
-				</Button>
+					<Button onClick={handleScanReceipt}>
+						Scan Receipt
+					</Button>
 
-			</Box>
-		</Container>
+				</Box>
+			</Container>
+		</>
 	);
 }
 

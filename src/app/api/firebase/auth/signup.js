@@ -15,7 +15,7 @@ async function signUp(req) {
 
             return result;
         } catch (e) {
-            console.log('Error occured at signup: ', e);
+            // console.log('Error occured at signup: ', e);
             
             return {
                 "operationType": "signUpError",

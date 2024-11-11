@@ -1,33 +1,29 @@
 'use client';
 
 import { useState, useEffect } from "react";
+import useStore from '@/app/store';
 import { useRouter } from 'next/navigation';
 import {
   Box,
-  AppBar,
-  Toolbar,
   Container,
   Typography,
   Grid,
   Card,
   CardMedia,
   CardActionArea,
-  CardContent,
-  IconButton,
-  Button
+  CardContent
 } from '@mui/material';
 import { db, auth } from '/src/firebase/config';
-import { faUsersLine } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { collection, query, where, getDocs } from 'firebase/firestore';
-import { BottomNavbar } from '../components/bottomNav';
-import { Fab } from '@mui/material';
-// import AddIcon from '@mui/icons-material/Add';
-import Cookies from 'js-cookie';
+import { TopNavbar } from "../components/topNav";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faUsersLine } from "@fortawesome/free-solid-svg-icons";
+import { AddExpenseButton } from '../components/addExpenseButton';
 
 function Page() {
   const [groups, setGroups] = useState([]);
-  const router = useRouter()
+  const router = useRouter();
+  const icon = <FontAwesomeIcon icon={faUsersLine} />;
 
   useEffect(() => {
     const fetchGroups = async () => {
@@ -36,7 +32,7 @@ function Page() {
 
         if (user) {
           const userGroupsQuery = query(
-            collection(db, 'userGroups'),
+            collection(db, 'UserGroups'),
             where('users', 'array-contains', user.uid) // Query for groups where the user is in the 'users' array
           );
 
@@ -50,43 +46,25 @@ function Page() {
           setGroups(groupData);
         } else {
           console.error('User not authenticated.');
-          // Handle the case where the user is not logged in
         }
       } catch (error) {
         console.error('Error fetching groups:', error);
-        // Handle errors appropriately 
       }
     };
     fetchGroups();
-  }, [])
+  }, []);
+
+  const func = function handleNewGroup() {
+    router.push('/allGroups/createGroup');
+  }
 
   function handleGroupTrans() {
     router.push('/groupTrans');
   }
 
-  function handleNewGroup() {
-    router.push('/allGroups/createGroup');
-  }
-
-  const handleLogout = () => {
-    Cookies.remove('userCookie');
-    router.push("/signin");
-  }
-
   return (
     <>
-      <AppBar position="static" sx={{ backgroundColor: '#00a3b8d1' }}>
-        <Toolbar>
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }} color="secondary">
-            Splitwiser
-          </Typography>
-          <IconButton variant="text" color="secondary" size="small" aria-label="delete" onClick={handleNewGroup}>
-            <FontAwesomeIcon icon={faUsersLine} />
-          </IconButton>
-          <Button onClick={handleLogout}>Logout</Button>
-        </Toolbar>
-      </AppBar>
-
+      <TopNavbar icon={ icon } function={ func } />
       <Container>
         <Typography component="div" sx={{ flexGrow: 1, marginY: 2 }} fontWeight={"bold"} color={"#009688"} fontSize={"smaller"}>
           Overall, you are owed $467.47
@@ -120,18 +98,7 @@ function Page() {
           ))}
         </Grid>
       </Container>
-			<Fab
-				color="primary"
-				aria-label="add"
-				sx={{
-					position: 'fixed',
-					bottom: 64,
-					right: 16,
-				}}>
-					Add Group
-				{/* <AddIcon /> */}
-    	</Fab>
-			{/* <BottomNavbar /> */}
+      <AddExpenseButton />
     </>
   );
 }

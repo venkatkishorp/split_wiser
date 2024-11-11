@@ -17,7 +17,7 @@ async function signIn(req) {
       return result;
     } 
     catch (e) {
-      console.log('Error occured at signin: ', e);
+      // console.log('Error occured at signin: ', e);
 
       return {
         "operationType": "signInError",
