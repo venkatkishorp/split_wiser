@@ -40,9 +40,7 @@ export default function Page() {
   const [image, setImage] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
   const router = useRouter();
-  const icon = <Button variant="text" color="secondary" size="small" aria-label="Save" onClick={handleCreateGroup} sx={{ color: 'white' }}>
-                 Done
-               </Button>;
+  const icon = <h5>Done</h5>;
 
   const handleImageChange = (event) => {
     if (event.target.files[0]) {
@@ -90,7 +88,7 @@ export default function Page() {
 
   return (
     <>
-      <TopNavbar icon={ icon } />
+      <TopNavbar icon={ icon } function={ handleCreateGroup } />
       <Container sx={{ marginY: 2 }}>
         <Box sx={{ display: 'flex', width: '100%' }} component="form" noValidate autoComplete="off">
           {

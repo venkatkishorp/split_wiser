@@ -11,8 +11,7 @@ import {
   Card,
   CardMedia,
   CardActionArea,
-  CardContent,
-  IconButton
+  CardContent
 } from '@mui/material';
 import { db, auth } from '/src/firebase/config';
 import { collection, query, where, getDocs } from 'firebase/firestore';
@@ -24,9 +23,7 @@ import { AddExpenseButton } from '../components/addExpenseButton';
 function Page() {
   const [groups, setGroups] = useState([]);
   const router = useRouter();
-  const icon = <IconButton variant="text" color="secondary" size="small" aria-label="delete" onClick={ handleNewGroup }>
-                  <FontAwesomeIcon icon={faUsersLine} />
-               </IconButton>
+  const icon = <FontAwesomeIcon icon={faUsersLine} />;
 
   useEffect(() => {
     const fetchGroups = async () => {
@@ -57,7 +54,7 @@ function Page() {
     fetchGroups();
   }, []);
 
-  function handleNewGroup() {
+  const func = function handleNewGroup() {
     router.push('/allGroups/createGroup');
   }
 
@@ -67,7 +64,7 @@ function Page() {
 
   return (
     <>
-      <TopNavbar icon={ icon } />
+      <TopNavbar icon={ icon } function={ func } />
       <Container>
         <Typography component="div" sx={{ flexGrow: 1, marginY: 2 }} fontWeight={"bold"} color={"#009688"} fontSize={"smaller"}>
           Overall, you are owed $467.47

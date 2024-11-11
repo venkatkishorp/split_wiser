@@ -14,17 +14,52 @@ import {
 	Typography,
   Paper,
 	IconButton,
-
+  TextField
 } from "@mui/material";
+import { TopNavbar } from "../../components/topNav";
 
 
 function Page() {
   const router = useRouter();
   const { uploadedImage } = useStore();
   const { items } = useStore();
+  let itemList = [];
+  // const [itemList, setItemList] = useState([]);
+  // let itemList = [];
+  const members = [
+    {
+      'uid': 1,
+      'name': 'Akash'
+    },
+    {
+      'uid': 2,
+      'name': 'Hrishi'
+    },
+    {
+      'uid': 3,
+      'name': 'Manasa'
+    },
+    {
+      'uid': 4,
+      'name': 'Panda'
+    },
+    {
+      'uid': 5,
+      'name': 'Rushalle'
+    },
+    {
+      'uid': 6,
+      'name': 'Venkat'
+    },
+    {
+      'uid': 7,
+      'name': 'Vinay'
+    }
+  ];
   const [loading, setLoading] = useState(false);
-  const [itemDetails, setItemDetails] = useState();
-  const [subTotal, setSubTotal] = useState(0);
+  const [displayAddRow, setDisplayAddRow] = useState(true);
+  const [newItem, setNewItem] = useState();
+  const [newCost, setNewCost] = useState(0);
   const [tax, setTax] = useState(0);
   const [total, setTotal] = useState(0);
   const [transDate, setTransDate] = useState('');
@@ -36,7 +71,26 @@ function Page() {
   };
 
   useEffect(() => {
-    console.log('The items from the store are: ', items);
+    // console.log('The items from the store are: ', items);
+
+    console.log('ItemList before: ', itemList);
+
+    let iList = [];
+    items.forEach(element => {
+      iList.push({
+        'name': element.name,
+        'quantity': element.quantity,
+        'price': 0
+      });
+    });
+
+    const storageItems = localStorage.getItem('itemsList');
+
+    localStorage.setItem('itemsList', storageItems || iList);
+    itemList = localStorage.getItem('itemsList');
+    // itemList = iList;
+
+    console.log('ItemList after: ', itemList);
   }, []);
 
   const handleSaveTransaction = async () => {
@@ -69,6 +123,24 @@ function Page() {
     }
   }
 
+  const addItemHandler = () => {
+    console.log('Add item handler');
+    setDisplayAddRow(false);
+  }
+
+  const saveItemHandler = () => {
+    itemList.push({
+      'key': 'newItem',
+      'name': newItem,
+      'price': newCost
+    });
+    setDisplayAddRow(true);
+    setNewCost(null);
+    setNewItem('');
+
+    localStorage.setItem('localItems', itemList);
+  }
+
   return (
     <>
       <TopNavbar icon={ <></> } />
@@ -79,11 +151,25 @@ function Page() {
               <Typography variant="h6" gutterBottom>
                 Items
               </Typography>
-              {items.map((item) => (
+              {itemList.map((item) => (
                 <Paper sx={{ padding: 2, marginBottom: 2, cursor: 'pointer' }}>
                   <Typography variant="body1">{item.name} {item.quantity == null && (item.quantity)}</Typography>
                 </Paper>
               ))}
+              { displayAddRow && <Paper sx={{ padding: 2, marginBottom: 2, cursor: 'pointer', background: 'orange' }} onClick={addItemHandler}>
+                <Typography variant="body1">Add item</Typography>
+              </Paper> }
+              { !displayAddRow && <Paper sx={{ padding: 2, marginBottom: 2, cursor: 'pointer' }}>
+                <Grid xs={3}>
+                  <TextField onChange={(e) => setNewItem(e)} label="Item" variant="outlined" />
+                </Grid>
+                <Grid xs={3}>
+                  <TextField onChange={(e) => setNewCost(e)} label="Cost" variant="outlined" />
+                </Grid>
+                <Grid xs={3}>
+                  <Button onClick={saveItemHandler}>Save</Button>
+                </Grid>
+              </Paper> }
             </Box>
           </Grid>
 
@@ -93,15 +179,16 @@ function Page() {
               <Typography variant="h6" gutterBottom>
                 Members
               </Typography>
-              {[...Array(5)].map((_, index) => (
-                <Paper key={index} sx={{ padding: 2, marginBottom: 2 }}>
-                  <Typography variant="body1">Right Item {index + 1}</Typography>
+              {members.map((member) => (
+                <Paper sx={{ padding: 2, marginBottom: 2 }}>
+                  <Typography variant="body1">{ member.name }</Typography>
                 </Paper>
               ))}
             </Box>
           </Grid>
         </Grid>
-        <Box>
+        <Button>Add item</Button>
+        {/* <Box>
           <h3>Assign Items</h3>
           <h4>The items:</h4>
           <ul>
@@ -109,7 +196,7 @@ function Page() {
               <li>{item.name}, {item.price}, {item.quantity}</li>
             ))}
           </ul>
-        </Box>
+        </Box> */}
       </Container>
     </>
   );
